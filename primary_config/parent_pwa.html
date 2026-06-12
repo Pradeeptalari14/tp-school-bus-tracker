@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BusTrack - Live Map</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 0; background: #f8fafc; }
+    .header { padding: 16px; background: #4f46e5; color: white; display: flex; align-items: center; justify-content: space-between; }
+    .status-card { margin: 16px; padding: 16px; background: white; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+    #map { height: 400px; margin: 0 16px; border-radius: 12px; border: 1px solid #e2e8f0; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h3 style="margin: 0;">🚌 Live Bus Tracker</h3>
+  </div>
+  <div class="status-card">
+    <div style="font-size: 12px; color: #64748b; font-weight: bold; text-transform: uppercase;">Next Stop</div>
+    <div style="font-size: 16px; font-weight: bold; color: #0f172a;" id="next-stop">Main Street Corner</div>
+    <div style="font-size: 13px; color: #4f46e5; font-weight: bold; margin-top: 4px;" id="eta-val">Calculating...</div>
+  </div>
+  <div id="map"></div>
+  <script>
+    const map = L.map('map').setView([12.971598, 77.594562], 15);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+    const stopIcon = L.divIcon({ html: '🚏', className: 'stop', iconSize: [24, 24] });
+    L.marker([12.971598, 77.594562], { icon: stopIcon }).addTo(map).bindPopup("Main Street Stop");
+
+    const busIcon = L.divIcon({ html: '🚌', className: 'bus', iconSize: [32, 32] });
+    const busMarker = L.marker([12.968, 77.590], { icon: busIcon }).addTo(map).bindPopup("Bus location");
+
+    setInterval(() => {
+      // Simulate real-time coordinates drift
+      const offset = (Math.random() - 0.5) * 0.0005;
+      const newLat = 12.971598 + offset;
+      const newLng = 77.594562 + offset;
+      busMarker.setLatLng([newLat, newLng]);
+      document.getElementById('eta-val').textContent = "ETA: ~" + Math.ceil(Math.abs(offset)*10000) + " mins";
+    }, 5000);
+  </script>
+</body>
+</html>
